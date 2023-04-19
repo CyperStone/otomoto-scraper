@@ -1,0 +1,1 @@
+# Web scraper of car offers from Polish marketplace Otomoto.pl
