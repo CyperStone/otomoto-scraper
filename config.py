@@ -44,6 +44,26 @@ website = SimpleNamespace(
         'OFFER_PARAMETER_VALUE': 'div.offer-params__value',
         'OFFER_CAR_FEATURES': 'div.offer-features > div.offer-features__row > ul.parameter-feature-group > li.parameter-feature-item',
         'OFFER_DESCRIPTION': 'div#description > div.offer-description__description'
+    },
+    FEATURE_NAMES_DICT={
+        'OFFER_DATETIME': 'Data utworzenia oferty',
+        'OFFER_TITLE': 'Tytuł oferty',
+        'PRICE': 'Cena',
+        'CURRENCY': 'Waluta',
+        'SELLER_NAME': 'Nazwa sprzedawcy',
+        'SELLER_TYPE': 'Typ sprzedawcy',
+        'SELLER_REGISTRATION_YEAR': 'Rok rejestracji sprzedawcy',
+        'OFFER_LOCATION': 'Lokalizacja',
+        'OFFER_DESCRIPTION': 'Opis oferty',
+        'OFFER_FROM': 'Oferta od',
+        'FUEL_TYPE': 'Rodzaj paliwa',
+        'TRANSMISSION_TYPE': 'Skrzynia biegów',
+        'DRIVE_TYPE': 'Napęd',
+        'BODY_TYPE': 'Typ nadwozia',
+        'COLOR_NAME': 'Kolor',
+        'COLOR_TYPE': 'Rodzaj koloru',
+        'CONDITION': 'Stan',
+        'ORIGIN_COUNTRY': 'Kraj pochodzenia'
     }
 )
 
@@ -72,4 +92,19 @@ scraper = SimpleNamespace(
     REQUEST_TIME_DELAY_MAX=4,
     DEFAULT_RESULTS_DIR='./data',
     RESULTS_FILE_NAME='otomoto_all_offers'
+)
+
+translation = SimpleNamespace(
+    DICT_PATHS={
+        'BODY_TYPES': './translation_dicts/body_types.json',
+        'COLOR_NAMES': './translation_dicts/color_names.json',
+        'COLOR_TYPES': './translation_dicts/color_types.json',
+        'COLUMN_NAMES': './translation_dicts/column_names.json',
+        'CONDITION_TYPES': './translation_dicts/condition_types.json',
+        'COUNTRY_NAMES': './translation_dicts/country_names.json',
+        'DRIVE_TYPES': './translation_dicts/drive_types.json',
+        'FUEL_TYPES': './translation_dicts/fuel_types.json',
+        'SELLER_TYPES': './translation_dicts/seller_types.json',
+        'TRANSMISSION_TYPES': './translation_dicts/transmission_types.json',
+    }
 )
