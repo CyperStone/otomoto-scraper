@@ -9,6 +9,7 @@ from unidecode import unidecode
 from selectolax.parser import HTMLParser
 from playwright.sync_api import sync_playwright
 from concurrent.futures import ThreadPoolExecutor
+from translate import translate_offers_df
 
 
 class OtomotoScraper:
@@ -205,28 +206,29 @@ class OtomotoScraper:
 
             features_dict['URL'] = offer_url
 
-            datetime = [node.text() for node in tree.css(self.website_cfg.CSS_SELECTORS['OFFER_DATETIME'])
-                        if 'id' not in node.attributes.keys()][0]
-            features_dict['Data utworzenia oferty'] = utils.parse_datetime(datetime)
+            offer_datetime = [node.text() for node in tree.css(self.website_cfg.CSS_SELECTORS['OFFER_DATETIME'])
+                              if 'id' not in node.attributes.keys()][0]
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['OFFER_DATETIME']] = utils.parse_datetime(offer_datetime)
 
             title = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_TITLE']).text(deep=False).strip()
-            features_dict['Tytuł oferty'] = title
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['OFFER_TITLE']] = title
 
             price = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_PRICE']).text(deep=False).strip()
-            features_dict['Cena'] = int(price.replace(' ', '').split(',')[0])
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['PRICE']] = int(price.replace(' ', '').split(',')[0])
 
             currency = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_CURRENCY']).text().strip()
-            features_dict['Waluta'] = currency
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['CURRENCY']] = currency
 
             seller_name = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_SELLER_NAME']).text().strip()
-            features_dict['Nazwa sprzedawcy'] = seller_name
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['SELLER_NAME']] = seller_name
 
             seller_details_nodes = tree.css(self.website_cfg.CSS_SELECTORS['OFFER_SELLER_DETAILS'])
-            features_dict['Typ sprzedawcy'] = seller_details_nodes[0].text().strip()
-            features_dict['Rok rejestracji sprzedawcy'] = int(seller_details_nodes[-1].text().strip().split(' ')[-1])
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['SELLER_TYPE']] = seller_details_nodes[0].text().strip()
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['SELLER_REGISTRATION_YEAR']] = \
+                int(seller_details_nodes[-1].text().strip().split(' ')[-1])
 
             location = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_LOCATION']).text().strip()
-            features_dict['Lokalizacja'] = location
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['OFFER_LOCATION']] = location
 
             parameter_nodes = tree.css(self.website_cfg.CSS_SELECTORS['OFFER_PARAMETER_NODES'])
             for parameter_node in parameter_nodes:
@@ -240,7 +242,7 @@ class OtomotoScraper:
                 features_dict[car_feature] = True
 
             description = tree.css_first(self.website_cfg.CSS_SELECTORS['OFFER_DESCRIPTION']).text(deep=False).strip()
-            features_dict['Opis oferty'] = description
+            features_dict[self.website_cfg.FEATURE_NAMES_DICT['OFFER_DESCRIPTION']] = description
 
         except Exception as e:
             print(f'Exception "{e}" (request: {offer_url})')
@@ -251,7 +253,7 @@ class OtomotoScraper:
 
         return features_dict
 
-    def scrape_all_offers(self, results_dir=None):
+    def scrape_all_offers(self, results_dir=None, to_eng=False):
         time_start = time()
         search_urls = self._get_search_urls()
         print(f'Found {len(search_urls)} different searches.')
@@ -276,14 +278,22 @@ class OtomotoScraper:
         time_elapsed_str = utils.format_time(time_stop - time_start)
         print(f'Scraped {len(offers)} car offers in {time_elapsed_str}.')
 
+        translation_success = None
+        if to_eng:
+            translation_success, offers = translate_offers_df(offers, self.website_cfg)
+
+        offers.columns = utils.normalize_column_names(offers.columns)
+
         if results_dir is None:
             results_dir = self.scraper_cfg.DEFAULT_RESULTS_DIR
 
             if not os.path.isdir(results_dir):
                 os.mkdir(results_dir)
 
-        timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-        full_path = f'{results_dir}/{self.scraper_cfg.RESULTS_FILE_NAME}_{timestamp}.csv'
+        lang = 'eng' if to_eng and translation_success else 'pl'
+        timestamp = datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
+
+        full_path = f'{results_dir}/{self.scraper_cfg.RESULTS_FILE_NAME}_{lang}_{timestamp}.csv'
         offers.to_csv(full_path, sep=';', index=False)
         print(f'Saved offers to {full_path}.')
 
