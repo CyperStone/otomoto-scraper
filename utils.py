@@ -1,5 +1,8 @@
+import re
+import json
 from time import sleep
 from random import random
+from unidecode import unidecode
 
 
 def go_to_sleep(a, b=None):
@@ -58,3 +61,19 @@ def format_time(seconds):
         time_str += f'({total_seconds} s)'
 
     return time_str.strip()
+
+
+def load_json(path):
+    with open(path, 'r', encoding='utf8') as f:
+        data = json.load(f)
+
+    return data
+
+
+def save_json(data, path):
+    with open(path, 'w', encoding='utf8') as f:
+        json.dump(data, f, indent=4)
+
+
+def normalize_column_names(column_names):
+    return [unidecode(re.sub(r'[.,():]', '', col)).lower().replace('- ', '').replace(' ', '_') for col in column_names]
