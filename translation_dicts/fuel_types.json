@@ -1,0 +1,9 @@
+{
+    "Benzyna":"Gasoline",
+    "Diesel":"Diesel",
+    "Hybryda":"Hybrid",
+    "Benzyna+LPG":"Gasoline + LPG",
+    "Elektryczny":"Electric",
+    "Benzyna+CNG":"Gasoline + CNG",
+    "Wodór":"Hydrogen"
+}
