@@ -286,9 +286,19 @@ class OtomotoScraper:
 
         if results_dir is None:
             results_dir = self.scraper_cfg.DEFAULT_RESULTS_DIR
-
             if not os.path.isdir(results_dir):
                 os.mkdir(results_dir)
+
+        else:
+            if not os.path.isdir(results_dir):
+                try:
+                    os.mkdir(results_dir)
+                except Exception as e:
+                    print(f'Given directory does not exist and could not be created due to: "{e}"')
+
+                    results_dir = self.scraper_cfg.DEFAULT_RESULTS_DIR
+                    if not os.path.isdir(results_dir):
+                        os.mkdir(results_dir)
 
         lang = 'eng' if to_eng and translation_success else 'pl'
         timestamp = datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
