@@ -17,3 +17,15 @@ conda activate myenv
 conda install pip
 pip install -r requirements.txt
 ```
+
+### Usage
+1. To scrape all offers available on the website simply use the following command:
+```
+python scrape_all_offers.py [OPTIONS]
+```
+2. Available options:
+```
+  --results_dir [RESULTS_DIR]   Path to directory where results have to be saved
+  --to_eng, --no-to_eng         Whether to translate results to english (default: False)
+```
+3. In case of being temporarily blocked by the server, try to change the number of used threads and/or the times between sending requests in `config.py`
