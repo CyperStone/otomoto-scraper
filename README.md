@@ -29,3 +29,6 @@ python scrape_all_offers.py [OPTIONS]
   --to_eng, --no-to_eng         Whether to translate results to english (default: False)
 ```
 3. In case of being temporarily blocked by the server, try to change the number of used threads and/or the times between sending requests in `config.py`
+
+### Dataset
+The dataset gathered using this scraper can be accessed [HERE](https://www.kaggle.com/datasets/szymoncyperski/car-sales-offers-from-otomotopl-2023).
